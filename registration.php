@@ -5,17 +5,14 @@
     $sweetAlertConfig = "";
  
     if (isset($_POST['register'])){
-
-  $firstname = $_POST['first_name'];
- $lastname = $_POST['last_name'];
-      $username = $_POST['username'];
-        
-      $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
-    $email = $_POST['email'];
      
-  
+      $username = $_POST['username'];
+      $email = $_POST['email'];
+      $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
+      $firstname = $_POST['first_name'];
+      $lastname = $_POST['last_name'];
  
-      $userID = $con->signupUser($firstname, $lastname, $username, $password, $email);
+      $userID = $con->signupUser($firstname, $lastname, $username, $email, $password);
      
       if ($userID) {
         $sweetAlertConfig = "
@@ -28,25 +25,23 @@
         }).then(() => {
           window.location.href = 'login.php';
         });
-        </script>
-        ";
+        </script>";
       } else {
-        $sweetAlertConfig = "
-         <script>
+        $sweetAlertConfig = "<script>
         Swal.fire({
           icon: 'error',
           title: 'Registration Failed',
           text: 'An error occurred during registration. Please try again.',
           confirmButtonText: 'OK'
         });
-        </script>"
-       
-        ;
+        </script>";
       }
     }
 ?>
 <!DOCTYPE html>
+ 
 <html lang="en">
+ 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -54,7 +49,9 @@
   <link rel="stylesheet" href="./bootstrap-5.3.3-dist/css/bootstrap.css">
   <link rel="stylesheet" href="./package/dist/sweetalert2.css">
 </head>
+ 
 <body class="bg-light">
+ 
   <div class="container py-5">
     <h2 class="mb-4 text-center">Admin Registration</h2>
     <form id="registrationForm" method="POST" action="" class="bg-white p-4 rounded shadow-sm">
@@ -63,25 +60,25 @@
         <input type="text" name="first_name" id="first_name" class="form-control" placeholder="Enter your first name" required>
         <div class="invalid-feedback">First name is required.</div>
       </div>
+ 
       <div class="mb-3">
         <label for="last_name" class="form-label">Last Name</label>
         <input type="text" name="last_name" id="last_name" class="form-control" placeholder="Enter your last name" required>
         <div class="invalid-feedback">Last name is required.</div>
       </div>
+ 
       <div class="mb-3">
         <label for="username" class="form-label">Username</label>
         <input type="text" name="username" id="username" class="form-control" placeholder="Enter your username" required>
         <div class="invalid-feedback">Username is required.</div>
       </div>
-
-      <!-- email -->
-       <div class="mb-3">
-        <label for="=email" class="form-label">email</label>
+ 
+      <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
         <input type="email" name="email" id="email" class="form-control" placeholder="Enter your email" required>
-        <div class="invalid-feedback">Email is required</div>      
+        <div class="invalid-feedback">Email is required.</div>
       </div>
-      <!-- email -->
-
+ 
       <div class="mb-3">
         <label for="password" class="form-label">Password</label>
         <input type="password" name="password" id="password" class="form-control" placeholder="Enter your password" required>
@@ -93,9 +90,9 @@
  
   <script src="./bootstrap-5.3.3-dist/js/bootstrap.js"></script>
   <script src="./package/dist/sweetalert2.js"></script>
-  <?php echo $sweetAlertConfig; ?>
+    <?php echo $sweetAlertConfig; ?>
   <script>
-
+ 
   // Function to validate individual fields
   function validateField(field, validationFn) {
     field.addEventListener('input', () => {
@@ -116,10 +113,6 @@
     return passwordRegex.test(value);
   };
  
-  
-
-
- 
   // Real-time username validation using AJAX
   const checkUsernameAvailability = (usernameField) => {
     usernameField.addEventListener('input', () => {
@@ -133,6 +126,8 @@
         return;
       }
  
+   
+ 
       // Send AJAX request to check username availability
       fetch('ajax/check_username.php', {
         method: 'POST',
@@ -141,6 +136,7 @@
         },
         body: `username=${encodeURIComponent(username)}`,
       })
+     
         .then((response) => response.json())
         .then((data) => {
           if (data.exists) {
@@ -155,16 +151,16 @@
             registerButton.disabled = false; //disabled the button
           }
         })
+ 
         .catch((error) => {
           console.error('Error:', error);
           registerButton.disabled = true; //disabled the button
+ 
         });
     });
   };
  
-
-
-  // Real-time email validation using AJAX
+ 
   const checkEmailAvailability = (emailField) => {
     emailField.addEventListener('input', () => {
       const email = emailField.value.trim();
@@ -172,12 +168,14 @@
       if (email === '') {
         emailField.classList.remove('is-valid');
         emailField.classList.add('is-invalid');
-        emailField.nextElementSibling.textContent = 'email is required.';
+        emailField.nextElementSibling.textContent = 'Email is required.';
         registerButton.disabled = true; //disabled the button
         return;
       }
  
-      // Send AJAX request to check email availability
+   
+ 
+      // Send AJAX request to check username availability
       fetch('ajax/check_email.php', {
         method: 'POST',
         headers: {
@@ -185,12 +183,13 @@
         },
         body: `email=${encodeURIComponent(email)}`,
       })
+     
         .then((response) => response.json())
         .then((data) => {
           if (data.exists) {
             emailField.classList.remove('is-valid');
             emailField.classList.add('is-invalid');
-            emailField.nextElementSibling.textContent = 'email is already taken.';
+            emailField.nextElementSibling.textContent = 'Email is already taken.';
             registerButton.disabled = true; //disabled the button
           } else {
             emailField.classList.remove('is-invalid');
@@ -199,14 +198,15 @@
             registerButton.disabled = false; //disabled the button
           }
         })
+ 
         .catch((error) => {
           console.error('Error:', error);
           registerButton.disabled = true; //disabled the button
+ 
         });
     });
   };
-
-
+ 
   // Get form fields
   const firstName = document.getElementById('first_name');
   const lastName = document.getElementById('last_name');
@@ -217,9 +217,10 @@
   // Attach real-time validation to each field
   validateField(firstName, isNotEmpty);
   validateField(lastName, isNotEmpty);
+  checkUsernameAvailability(username);
+  checkEmailAvailability(email);
   validateField(password, isPasswordValid);
-   checkUsernameAvailability(username);
-    checkEmailAvailability(email);
+ 
  
   // Form submission validation
   document.getElementById('registrationForm').addEventListener('submit', function (e) {
@@ -228,7 +229,7 @@
     let isValid = true;
  
     // Validate all fields on submit
-    [firstName, lastName, username, password, email].forEach((field) => {
+    [firstName, lastName, username, email, password].forEach((field) => {
       if (!field.classList.contains('is-valid')) {
         field.classList.add('is-invalid');
         isValid = false;
@@ -241,10 +242,6 @@
     }
   });
 </script>
- 
- 
 </body>
 </html>
- 
- 
  
